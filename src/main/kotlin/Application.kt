@@ -15,7 +15,7 @@ import routes.customerRoute
 import routes.licenceRoute
 
 val client = KMongo.createClient()
-val db = client.getDatabase("ProjectDB")
+val db = client.getDatabase("ServiceNSW")
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
