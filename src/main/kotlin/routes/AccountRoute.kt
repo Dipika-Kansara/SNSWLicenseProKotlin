@@ -37,10 +37,19 @@ fun Route.accountRoute (db:MongoDatabase){
         post("/register"){
             val data = call.receive<User>()
             val hashed = BCrypt.hashpw(data.password,BCrypt.gensalt())
-            val user = User(email = data.email, password = hashed,roles = listOf("customer"),dob = data.dob, address = data.address)
+            val user = User(
+                email = data.email,
+                password = hashed,
+                roles = listOf("customer"),
+                firstName = data.firstName,
+                lastName = data.lastName,
+                dob = data.dob,
+                address = data.address,
+                mobile = data.mobile
+            )
             usersCollection.insertOne(user)
             val token = getJWTToken(user)
-            call.respond(HttpStatusCode.Created,token)
+            call.respond(HttpStatusCode.Created,data)
         }
 
         post("/login"){
