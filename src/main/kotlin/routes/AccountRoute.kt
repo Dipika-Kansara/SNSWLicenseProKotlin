@@ -21,6 +21,7 @@ fun getJWTToken(user:User): String {
         .withAudience("http://localhost:8080")
         .withIssuer("http://localhost:8080")
         .withClaim("email",user?.email)
+        .withClaim("firstName",user?.firstName)
         .withClaim("id",user._id.toString())
         .withClaim("roles",user?.roles)
         .withClaim("dob",user?.dob)

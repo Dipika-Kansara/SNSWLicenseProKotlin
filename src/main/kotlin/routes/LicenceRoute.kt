@@ -37,13 +37,18 @@ fun Route.licenceRoute (db: MongoDatabase) {
         }
 
         get{
+//            val principal = call.principal<JWTPrincipal>()
+//            val userId = principal?.payload?.getClaim("id").toString().replace("\"","")
+//            val licence = licenceCollection.findOne("{userId:'$userId'}")
+//            if(licence == null) {
+//               return@get call.respond(HttpStatusCode.NotFound)
+//            }
+//            call.respond(licence.dto())
+
             val principal = call.principal<JWTPrincipal>()
             val userId = principal?.payload?.getClaim("id").toString().replace("\"","")
-            val licence = licenceCollection.findOne("{userId:'$userId'}")
-            if(licence == null) {
-               return@get call.respond(HttpStatusCode.NotFound)
-            }
-            call.respond(licence.dto())
+            val licences = licenceCollection.find("{userId:'$userId'}").toList().map { it.dto() }
+            call.respond(licences)
         }
 
         get("{id}"){

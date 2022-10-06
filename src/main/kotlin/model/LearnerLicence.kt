@@ -40,6 +40,7 @@ data class LogEntry(
     get() {
         return Duration.ofMillis(duration.toMillis() + bonus.toMillis())
     }
+
 }
 
 @Serializable
@@ -52,6 +53,7 @@ class LearnerLicenceDTO{
     val userId : String
     val logEntries: MutableList<LogEntryDTO>
     val total:TimeUnitDTO
+    val remaining: TimeUnitDTO
 
     constructor(licence: LearnerLicence){
         _id = licence._id
@@ -59,15 +61,25 @@ class LearnerLicenceDTO{
         issuedBy = licence.issuedBy
         userId = licence.userId
         var licenceTotal : Long = 0
+        var nighHousTotal : Long = 0
+
+
         logEntries = licence.logEntries.map {
             val duration = TimeUnitDTO(it.duration)
             val bonus = TimeUnitDTO(it.bonus)
             val total = TimeUnitDTO(it.total)
+
             licenceTotal += it.total.toSeconds()
+
             LogEntryDTO(it.start,it.end,it.instructor,duration,bonus,total)
         }.toMutableList()
         val ltd = Duration.ofSeconds(licenceTotal)
+        val remainingLtd = Duration.ofSeconds((120 *60 *60 ).toLong() - licenceTotal)
+
         total = TimeUnitDTO(ltd)
+        remaining = TimeUnitDTO(remainingLtd)
+
+
     }
 }
 @Serializable
@@ -77,7 +89,8 @@ data class LogEntryDTO(
     val instructor:Boolean,
     val duration : TimeUnitDTO,
     val bonus : TimeUnitDTO,
-    val total : TimeUnitDTO
+    val total : TimeUnitDTO,
+
 )
 
 @Serializable
