@@ -3,6 +3,7 @@ package routes
 import RoleBasedAuthorization
 import com.mongodb.client.MongoDatabase
 import getEmail
+import getId
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.auth.*
@@ -37,13 +38,7 @@ fun Route.licenceRoute (db: MongoDatabase) {
         }
 
         get{
-//            val principal = call.principal<JWTPrincipal>()
-//            val userId = principal?.payload?.getClaim("id").toString().replace("\"","")
-//            val licence = licenceCollection.findOne("{userId:'$userId'}")
-//            if(licence == null) {
-//               return@get call.respond(HttpStatusCode.NotFound)
-//            }
-//            call.respond(licence.dto())
+
 
             val principal = call.principal<JWTPrincipal>()
             val userId = principal?.payload?.getClaim("id").toString().replace("\"","")
@@ -61,6 +56,20 @@ fun Route.licenceRoute (db: MongoDatabase) {
                 return@get call.respond(dto)
             }
             return@get call.respond(HttpStatusCode.NotFound)
+        }
+
+        delete ("{id}/logbook-entry/{entryId}"){
+            val id = call.parameters["id"].toString()
+            val entryId = call.parameters["entryId"].toString()
+            val userId = call.principal<JWTPrincipal>()?.getId()
+            val licence = licenceCollection.findOne("{userId:'$userId',_id:ObjectId('$id')}")
+            if(licence != null){
+                if(licence.logEntries.removeIf{ le -> le._id.toString() == entryId }){
+                    licenceCollection.updateOne(licence)
+                }
+                return@delete call.respond(licence.dto())
+            }
+            return@delete call.respond(HttpStatusCode.BadRequest)
         }
 
 
