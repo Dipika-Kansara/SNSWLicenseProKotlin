@@ -10,8 +10,9 @@ import io.ktor.server.plugins.cors.routing.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.litote.kmongo.*
-import routes.accountRoute
-import routes.customerRoute
+import routes.Account.accountRoute
+import routes.Admin.customerRoute
+import routes.Customer.customerProfile
 import routes.licenceRoute
 
 val client = KMongo.createClient()
@@ -35,6 +36,7 @@ fun Application.init() {
 
             licenceRoute(db)
             customerRoute(db)
+            customerProfile(db)
 
         }
     }
